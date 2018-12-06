@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#email settings
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.mail.yahoo.com'
+# EMAIL_HOST_USER = '*@yahoo.com'
+# EMAIL_HOST_PASSWORD = 'pass
+# EMAIL_PORT = 587
 
 # Application definition
 
@@ -37,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'wall_api'
 ]
 
 MIDDLEWARE = [
