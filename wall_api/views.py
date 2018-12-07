@@ -6,25 +6,22 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.shortcuts import redirect
+from django.shortcuts import redirect,render
 from django.contrib.auth import login
 from wall_api.permissions import IsOwnerOrReadOnly
 from wall_api.serializers import MessageSerializer,UserSerializer
 from wall_api.models import Message
 
 
+
 class MessageView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
-    def get(self,request):
-        q = Message.objects.all().order_by('created')
-        ser = MessageSerializer(data=q)
-        return Response(ser.data,status.HTTP_200_OK)
 
     def post(self,request):
         newdict = {'user': self.request.user.id,'content':self.request.data['content']}
         ser = MessageSerializer(data=newdict)
         if ser.is_valid():
-            ser.save(user=self.request.user)
+            ser.save()
         return redirect('/',self.request)
 
 @api_view(['POST'])
@@ -43,10 +40,12 @@ def register(request):
                 login(request,User.objects.get(username=serialized.validated_data['username']))
                 return redirect('/',request)
             else:
-                return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+                return render(request, 'wall_viewer/register.html',
+                              context={'error': serialized.errors}
+                              )
+                #return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
-            return Response(ex,status.HTTP_400_BAD_REQUEST)
-
-
-
-
+            return render(request, 'wall_viewer/register.html',
+                          context={'error': 'Something went wrong try Register again.'}
+                          )
+            #return Response(ex,status.HTTP_400_BAD_REQUEST)

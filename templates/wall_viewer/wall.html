@@ -1,0 +1,35 @@
+{% include "wall_viewer/head.html" %}
+
+<div class="container">
+	<div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            {% if user.is_authenticated  %}
+            <div class="container-fluid">
+                    <form action="/msg-api/messages/" method="post" role="form"> {% csrf_token %}
+                <div class="form-group">
+                    <textarea rows="3" class="form-control" name="content" id="id_post" placeholder="Enter User post" style="min-width: 100px;" required> </textarea>
+                </div>
+
+                 <div class="form-check">
+                        <center><button type="submit" class="btn btn-primary">Post Now</button></center>
+                 </div>
+            </form>
+            </div>
+            <hr>
+            {% endif %}
+            <center><h3>All Messages</h3></center>
+            <div class="container-fluid">
+                {% for msg in messages %}
+                    <div class="row">
+                       <p>
+                           {{msg.content}}
+                       </p>
+                    </div><hr>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+{% include "wall_viewer/footer.html" %}
