@@ -1,28 +1,37 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-
+from django.shortcuts import redirect
+from django.contrib.auth import login
 from wall_api.permissions import IsOwnerOrReadOnly
 from wall_api.serializers import MessageSerializer,UserSerializer
 from wall_api.models import Message
 
 
-class MessageViewSet(ModelViewSet):
-    """
-        A viewset for viewing and editing Message instances.
-    """
-    serializer_class = MessageSerializer
-    queryset = Message.objects.all()
+class MessageView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
+    def get(self,request):
+        q = Message.objects.all().order_by('created')
+        ser = MessageSerializer(data=q)
+        return Response(ser.data,status.HTTP_200_OK)
+
+    def post(self,request):
+        newdict = {'user': self.request.user.id,'content':self.request.data['content']}
+        ser = MessageSerializer(data=newdict)
+        if ser.is_valid():
+            ser.save(user=self.request.user)
+        return redirect('/',self.request)
 
 @api_view(['POST'])
 def register(request):
     if request.method == 'POST':
         try:
+            print(request.data)
             serialized = UserSerializer(data=request.data)
             if serialized.is_valid():
                 User.objects.create_user(
@@ -30,8 +39,9 @@ def register(request):
                     serialized.validated_data['email'],
                     serialized.validated_data['password']
                 )
-                #send_mail('welcome message','welcome to Wall App','naser.khanafeer@gmail.com',[serialized.validated_data['email']])
-                return Response(serialized.data, status=status.HTTP_201_CREATED)
+                #send_mail('welcome message','welcome to Wall App','naser_khanafeer@yahoo.com',[serialized.validated_data['email']])
+                login(request,User.objects.get(username=serialized.validated_data['username']))
+                return redirect('/',request)
             else:
                 return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:

@@ -1,0 +1,26 @@
+{% include "wall_viewer/head.html" %}
+
+<center><h1>Login Page</h1></center>
+
+<div class="container">
+	<div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form action="/login/" method="post" role="form"> {% csrf_token %}
+                <div class="form-group">
+                        <label for="id_username">User Name</label>
+                        <input type="text" class="form-control" name="username" id="id_username" placeholder="Enter User Name" required>
+                </div>
+
+                <div class="form-group">
+                        <label for="id_password">Password</label>
+                        <input type="password" class="form-control" name="password" id="id_password" placeholder="Enter password" required>
+                </div>
+                 <div class="form-check">
+                        <center><button type="submit" class="btn btn-primary">Login</button></center>
+                 </div>
+            </form>
+        </div>
+	</div>
+</div>
+
+{% include "wall_viewer/footer.html" %}

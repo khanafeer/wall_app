@@ -9,6 +9,7 @@ class MessageSerializer(ModelSerializer):
         fields = '__all__'
 
 
+
 class UserSerializer(ModelSerializer):
 
     class Meta:

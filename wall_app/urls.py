@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-
+from wall_viewer.views import home,LoginView,logout_view,register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('msg-api/',include('wall_api.urls')),
-    path('api-auth/', include('rest_framework.urls')),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/',logout_view),
+    path('register/',register),
+    path('',home),
 ]
